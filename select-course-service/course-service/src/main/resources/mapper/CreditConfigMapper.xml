@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.personal.course.dao.CreditConfigDao">
+    <resultMap id="BaseResultMap" type="com.personal.course.model.CreditConfig">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <id column="min_credit" jdbcType="BIGINT" property="minCredit"/>
+        <result column="max_credit" jdbcType="VARCHAR" property="maxCredit"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+    id,  min_credit,max_credit
+  </sql>
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_credit_config
+        where
+        id = 1;
+    </select>
+
+</mapper>

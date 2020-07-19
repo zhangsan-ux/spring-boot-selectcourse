@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.personal.course.dao.SysMenuDao">
+    <resultMap id="BaseResultMap" type="com.personal.course.model.SysMenu">
+        <id column="menu_id" jdbcType="BIGINT" property="menuId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="perms" jdbcType="VARCHAR" property="perms"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+   t.menu_id,  t.parent_id,t.name,  t.url,t.perms,  t.order_num,t.type
+  </sql>
+
+    <select id="selectAllMenu" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_menu t
+    </select>
+
+    <resultMap id="BaseResultMapFindMenu" type="com.personal.course.model.Role">
+        <id column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="role_name" jdbcType="INTEGER" property="roleName"/>
+        <result column="role_remark" jdbcType="VARCHAR" property="roleRemark"/>
+    </resultMap>
+    <sql id="Base_Column_List1">
+     role_id, role_name,role_remark
+   </sql>
+    <select id="selectMenuInfoByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMapFindMenu">
+        select
+        <include refid="Base_Column_List1"/>
+        from
+        t_role t
+        where t.role_id = #{roleId}
+    </select>
+
+    <resultMap id="BaseResultMapFindAllMenu" type="com.personal.course.model.RoleMenu">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="menu_id" jdbcType="INTEGER" property="menuId"/>
+    </resultMap>
+    <sql id="Base_Column_List2">
+    id,role_id,menu_id
+   </sql>
+    <select id="selectAllMenuByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMapFindAllMenu">
+        select
+        <include refid="Base_Column_List2"/>
+        from
+        t_role_menu
+        where
+        role_id = #{roleId}
+    </select>
+
+    <delete id="deleteAllMenuByRoleId" parameterType="java.lang.Long">
+       delete
+       from
+        t_role_menu
+        where
+        role_id  = #{roleId}
+    </delete>
+
+    <insert id="insertMenusByRoleId" parameterType="com.personal.course.model.RoleMenu">
+        insert into
+        t_role_menu
+        (role_id,menu_id)
+        values
+        <foreach collection="roleMenuList" item="item" index="index" separator=",">
+            (
+            #{roleId},
+            #{item}
+            )
+        </foreach>
+    </insert>
+
+    <select id="listMenuByMenuIds" parameterType="list" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_menu t
+        where
+         t.menu_id in
+        <foreach collection="menuIdList" item="menuId" open="(" close=")" separator=",">
+            #{menuId}
+        </foreach>
+
+    </select>
+</mapper>

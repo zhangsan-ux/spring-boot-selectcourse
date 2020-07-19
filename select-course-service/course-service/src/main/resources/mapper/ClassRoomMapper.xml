@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.personal.course.dao.ClassRoomDao">
+    <resultMap id="BaseResultMap" type="com.personal.course.model.ClassRoom">
+        <id column="classroom_id" jdbcType="BIGINT" property="classroomId"/>
+        <result column="classroom_name" jdbcType="VARCHAR" property="classroomName"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+    classroom_id,  classroom_name
+  </sql>
+    <select id="selectAllCourse" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_course
+    </select>
+
+    <select id="listClassRoom" parameterType="com.personal.course.dto.sys.req.ClassRoomQueryReq"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_classroom
+        <where>
+            <if test="classRoomName!=null and classRoomName !=''">
+                and classroom_name like concat('%',#{classRoomName},'%')
+            </if>
+
+        </where>
+        order by classroom_id desc
+    </select>
+
+    <insert id="addClassRoom" parameterType="com.personal.course.model.ClassRoom">
+        insert into
+        t_classroom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="classroomName != null">
+                classroom_name,
+            </if>
+            <if test="classroomId != null">
+                classroom_id,
+            </if>
+
+
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="classroomName != null">
+                #{classroomName},
+            </if>
+            <if test="classroomId != null">
+                #{classroomId},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="findClassRoomByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_classroom
+        where classroom_name = #{classroomName}
+
+    </select>
+
+
+
+
+    <delete id="deleteCourseByCourseId" parameterType="java.lang.Long">
+     delete from
+     t_classroom
+     where
+     classroom_id = #{classroomId}
+    </delete>
+
+    <select id="findClassRoomById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_classroom
+        where classroom_id =#{classroomId}
+
+    </select>
+
+    <update id="updateClassRoomById" parameterType="com.personal.course.model.ClassRoom">
+        update t_classroom
+        <set>
+            <if test="classroomName != null">
+                classroom_name = #{classroomName},
+            </if>
+        </set>
+        where classroom_id = #{classroomId}
+    </update>
+    <resultMap id="BaseResultMapShowCourseClassRoomInfo" type="com.personal.course.bo.CourseClassRoomInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <id column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="course_id" jdbcType="BIGINT" property="courseId"/>
+         <result column="classroom_id" jdbcType="BIGINT" property="classroomId"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="classroom_name" jdbcType="VARCHAR" property="classRoom"/>
+    </resultMap>
+    <sql id="Base_Column_ListShow_Course_ClassRoom_Info">
+      t.id,  t1.user_id, t1.name, t2.course_id,t2.course_name,t3.classroom_name,t3.classroom_Id
+    </sql>
+    <select id="showCourseClassRoomInfo" resultMap="BaseResultMapShowCourseClassRoomInfo" >
+        select
+        <include refid="Base_Column_ListShow_Course_ClassRoom_Info"/>
+        from
+        t_user_coursr_info t
+        left join t_user t1 on t.user_id = t1.user_id
+        left join t_course t2 on t2.course_id = t.course_id
+        left join t_classroom t3 on t3.classroom_id = t.classroom_id
+        where
+        t1.role_id=3
+    </select>
+
+    <update id="updateUserClassroomById" parameterType="com.personal.course.model.UserCourseInfo">
+        update t_user_coursr_info
+        set classroom_id = #{classroomId}
+        where id = #{id}
+    </update>
+
+</mapper>

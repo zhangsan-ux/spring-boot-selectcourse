@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.personal.course.dao.UserCourseDao">
+    <resultMap id="BaseResultMap" type="com.personal.course.model.UserCourse">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <id column="classroom_id" jdbcType="BIGINT" property="classroomId"/>
+        <result column="course_id" jdbcType="BIGINT" property="courseId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+     t.id,   t.user_id, t.classroom_id, t.course_id
+  </sql>
+    <sql id="Base_Column_List_Course">
+   course_id,  course_name,course_credit, create_by,create_time,update_by,update_time
+  </sql>
+    <insert id="insertChooseCourse" parameterType="com.personal.course.model.UserCourse">
+        insert into
+        t_user_coursr_info
+        (user_id,course_id,classroom_id)
+        values
+        <foreach collection="userCourseList" item="item" index="index" separator=",">
+            (
+            #{item.userId},
+            #{item.courseId},
+            1
+            )
+        </foreach>
+    </insert>
+
+    <resultMap id="BaseResultMapCourse" type="com.personal.course.model.Course">
+        <id column="course_id" jdbcType="BIGINT" property="courseId"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="course_credit" jdbcType="DOUBLE" property="courseCredit"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <select id="listCourseByIds" parameterType="java.lang.Long" resultMap="BaseResultMapCourse">
+        select
+        <include refid="Base_Column_List_Course"/>
+        from
+        t_course
+        where
+        t_course.course_id in
+        <foreach item="item" collection="courseIds" separator="," open="(" close=")" index="">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <resultMap id="BaseResultMap1" type="com.personal.course.model.Course">
+        <id column="course_id" jdbcType="BIGINT" property="courseId"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="course_credit" jdbcType="DOUBLE" property="courseCredit"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List1">
+    t.course_id,  t.course_name,t.course_credit, t.create_by,t.create_time,t.update_by,t.update_time
+  </sql>
+    <select id="listCourseByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap1">
+        select
+        <include refid="Base_Column_List1"/>
+        from
+        t_course t
+        left join t_user_coursr_info t1 on t1.course_id = t.course_id
+        where
+        t1.user_id= #{userId}
+    </select>
+
+    <select id="listCourseByCourseIds" parameterType="java.lang.Long" resultMap="BaseResultMap1">
+        select
+        <include refid="Base_Column_List1"/>
+        from
+        t_course t
+        where
+        t.course_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="showChooseCourseByUserId" parameterType="java.lang.Long" resultMap="BaseResultMapCourse">
+        select
+        <include refid="Base_Column_List1"/>
+        from
+        t_course t
+        left join t_user_coursr_info t1 on t1.course_id = t.course_id
+        where t1.user_id = #{userId}
+    </select>
+    <delete id="deleteCourseByCourseIdAndUserId">
+        delete from
+        t_user_coursr_info t1
+        where t1.user_id = #{userId}
+        and
+        t1.course_id in
+        <foreach collection="courseIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <resultMap id="BaseResultMapStudentInfo" type="com.personal.course.bo.StudentInfo">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="business_number" jdbcType="VARCHAR" property="businessNumber"/>
+        <result column="class_name" jdbcType="VARCHAR" property="className"/>
+        <result column="user_sex" jdbcType="BIGINT" property="userSex"/>
+        <result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="idcard" jdbcType="VARCHAR" property="idCard"/>
+        <result column="sumCredit" jdbcType="DOUBLE" property="sumCredit"/>
+    </resultMap>
+
+    <sql id="studentInfo">
+        t.user_id ,t.name,t.business_number,t.class_name, t.user_sex,t.image_url,t.mobile,t.idcard,   SUM(t2.course_credit) as sumCredit
+    </sql>
+    <select id="selectStudentInfoByUserId" parameterType="java.lang.Long" resultMap="BaseResultMapStudentInfo">
+        select
+        <include refid="studentInfo"/>
+        FROM t_user t
+        LEFT JOIN t_user_coursr_info t1 on t1.user_id = t.user_id
+        LEFT JOIN t_course t2 on t2.course_id = t1.course_id
+        GROUP BY t.user_id
+        having t.user_id =#{userId}
+    </select>
+
+</mapper>

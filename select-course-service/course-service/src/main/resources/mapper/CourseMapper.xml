@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.personal.course.dao.CourseDao">
+    <resultMap id="BaseResultMap" type="com.personal.course.model.Course">
+        <id column="course_id" jdbcType="BIGINT" property="courseId"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="course_credit" jdbcType="DOUBLE" property="courseCredit"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    course_id,  course_name,course_credit, create_by,create_time,update_by,update_time
+  </sql>
+    <select id="selectAllCourse" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_course
+    </select>
+
+    <select id="listCourse" parameterType="com.personal.course.dto.sys.req.CourseQueryReq"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_course
+        <where>
+            <if test="courseName!=null and courseName !=''">
+                and course_name like concat('%',#{courseName},'%')
+            </if>
+
+        </where>
+        order by course_id desc
+    </select>
+
+    <insert id="addCourse" parameterType="com.personal.course.model.SysUser">
+        insert into
+        t_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="courseName != null">
+                course_name,
+            </if>
+            <if test="courseCredit != null">
+                course_credit,
+            </if>
+
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="courseName != null">
+                #{courseName,jdbcType=VARCHAR},
+            </if>
+            <if test="courseCredit != null">
+                #{courseCredit,jdbcType=VARCHAR},
+            </if>
+
+
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="findCourseByCourseName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_course
+        where course_name = #{courseName}
+
+    </select>
+
+
+
+
+    <delete id="deleteCourseByCourseId" parameterType="java.lang.Long">
+     delete from
+     t_course
+     where
+     course_id = #{coursrId}
+    </delete>
+
+    <select id="findCourseByCourseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        t_course
+        where course_id =#{courseId}
+
+    </select>
+
+    <update id="updateCourseByCourseId" parameterType="com.personal.course.model.Course">
+        update t_course
+        <set>
+            <if test="courseName != null">
+                course_name = #{courseName},
+            </if>
+            <if test="courseCredit != null">
+                course_credit = #{courseCredit},
+            </if>
+
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+
+        </set>
+        where course_id = #{courseId}
+    </update>
+
+</mapper>
