@@ -36,7 +36,7 @@
         <org.slf4j-api.version>1.7.29</org.slf4j-api.version>
         <modules.version>0.0.1-SNAPSHOT</modules.version>
         <jedis.version>2.9.0</jedis.version>
-        <httpclient.version>4.5.6</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <easyexcel.version>2.1.4</easyexcel.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
         <jackson-databind>2.9.2</jackson-databind>
