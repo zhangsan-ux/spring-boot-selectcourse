@@ -24,7 +24,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>13</maven.compiler.source>
         <maven.compiler.target>13</maven.compiler.target>
-        <springboot.version>2.2.6.RELEASE</springboot.version>
+        <springboot.version>2.5.12</springboot.version>
         <mybatis.version>2.1.1</mybatis.version>
         <mysql-connector.version>8.0.11</mysql-connector.version>
         <lombok.version>1.18.10</lombok.version>
