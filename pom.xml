@@ -39,7 +39,7 @@
         <httpclient.version>4.5.6</httpclient.version>
         <easyexcel.version>2.1.4</easyexcel.version>
         <pagehelper-spring-boot-starter.version>1.2.13</pagehelper-spring-boot-starter.version>
-        <jackson-databind>2.9.2</jackson-databind>
+        <jackson-databind>2.13.4.1</jackson-databind>
     </properties>
 
     <dependencyManagement>
